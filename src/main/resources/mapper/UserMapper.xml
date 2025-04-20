@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloudladdertech.skillshare.mapper.UserMapper">
+    
+    <resultMap id="BaseResultMap" type="com.cloudladdertech.skillshare.entity.User">
+        <id column="user_id" property="userId"/>
+        <result column="username" property="username"/>
+        <result column="email" property="email"/>
+        <result column="password_hash" property="passwordHash"/>
+        <result column="school" property="school"/>
+        <result column="major" property="major"/>
+        <result column="avatar_url" property="avatarUrl"/>
+        <result column="bio" property="bio"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        user_id, username, email, password_hash, school, major, avatar_url, bio, created_at, updated_at
+    </sql>
+    
+    <select id="findByEmail" resultMap="BaseResultMap">
+        SELECT 
+        <include refid="Base_Column_List"/>
+        FROM users 
+        WHERE email = #{email}
+    </select>
+    
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT 
+        <include refid="Base_Column_List"/>
+        FROM users 
+        WHERE user_id = #{userId}
+    </select>
+    
+    <insert id="insert" parameterType="com.cloudladdertech.skillshare.entity.User" useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO users (
+            username, email, password_hash, school, major, avatar_url, bio
+        ) VALUES (
+            #{username}, #{email}, #{passwordHash}, #{school}, #{major}, #{avatarUrl}, #{bio}
+        )
+    </insert>
+    
+    <update id="update" parameterType="com.cloudladdertech.skillshare.entity.User">
+        UPDATE users
+        <set>
+            <if test="username != null">username = #{username},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="passwordHash != null">password_hash = #{passwordHash},</if>
+            <if test="school != null">school = #{school},</if>
+            <if test="major != null">major = #{major},</if>
+            <if test="avatarUrl != null">avatar_url = #{avatarUrl},</if>
+            <if test="bio != null">bio = #{bio},</if>
+        </set>
+        WHERE user_id = #{userId}
+    </update>
+    
+</mapper> 
