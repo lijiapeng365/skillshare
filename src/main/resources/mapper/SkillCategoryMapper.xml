@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloudladdertech.skillshare.mapper.SkillCategoryMapper">
+
+    <resultMap id="SkillCategoryResultMap" type="com.cloudladdertech.skillshare.entity.SkillCategory">
+        <id property="categoryId" column="category_id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="iconUrl" column="icon_url"/>
+        <result property="skillCount" column="skill_count"/>
+    </resultMap>
+
+    <sql id="selectCategoryColumns">
+        category_id, name, description, icon_url, skill_count
+    </sql>
+
+    <select id="findById" resultMap="SkillCategoryResultMap">
+        SELECT <include refid="selectCategoryColumns"/>
+        FROM skill_categories
+        WHERE category_id = #{categoryId}
+    </select>
+
+    <select id="findAll" resultMap="SkillCategoryResultMap">
+        SELECT <include refid="selectCategoryColumns"/>
+        FROM skill_categories
+        ORDER BY name ASC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="categoryId">
+        INSERT INTO skill_categories (name, description, icon_url, skill_count)
+        VALUES (#{name}, #{description}, #{iconUrl}, #{skillCount})
+    </insert>
+
+    <update id="update">
+        UPDATE skill_categories
+        <set>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="iconUrl != null">icon_url = #{iconUrl},</if>
+            <if test="skillCount != null">skill_count = #{skillCount},</if>
+        </set>
+        WHERE category_id = #{categoryId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM skill_categories WHERE category_id = #{categoryId}
+        <!-- Consider constraints or handling skills in this category -->
+    </delete>
+
+    <select id="findByIds" resultMap="SkillCategoryResultMap">
+        SELECT <include refid="selectCategoryColumns"/>
+        FROM skill_categories
+        WHERE category_id IN
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <!-- May need methods to update skill_count later -->
+
+</mapper> 

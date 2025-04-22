@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloudladdertech.skillshare.mapper.SkillOfferingTagMappingMapper">
+
+    <!-- 注意：表名是 skill_tag_mapping -->
+
+    <resultMap id="MappingResultMap" type="com.cloudladdertech.skillshare.entity.SkillOfferingTagMapping">
+        <id property="mappingId" column="mapping_id"/>
+        <result property="skillId" column="skill_id"/>
+        <result property="tagId" column="tag_id"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="mappingId">
+        INSERT INTO skill_tag_mapping (skill_id, tag_id)
+        VALUES (#{skillId}, #{tagId})
+        <!-- Consider adding ON DUPLICATE KEY UPDATE logic if re-adding the same mapping should be ignored -->
+    </insert>
+
+    <select id="findBySkillId" resultMap="MappingResultMap">
+        SELECT mapping_id, skill_id, tag_id
+        FROM skill_tag_mapping
+        WHERE skill_id = #{skillId}
+    </select>
+
+    <delete id="deleteBySkillId">
+        DELETE FROM skill_tag_mapping WHERE skill_id = #{skillId}
+    </delete>
+
+    <!-- Optional: Implement deleteByTagId if needed -->
+    <!--
+    <delete id="deleteByTagId">
+        DELETE FROM skill_tag_mapping WHERE tag_id = #{tagId}
+    </delete>
+    -->
+
+</mapper> 

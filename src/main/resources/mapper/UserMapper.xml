@@ -55,4 +55,14 @@
         WHERE user_id = #{userId}
     </update>
     
+    <select id="findByIds" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM users
+        WHERE user_id IN
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    
 </mapper> 

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloudladdertech.skillshare.mapper.FavoriteMapper">
+
+    <select id="exists" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM favorites
+            WHERE user_id = #{userId} AND skill_id = #{skillId}
+        )
+    </select>
+
+    <delete id="deleteBySkillId">
+        DELETE FROM favorites WHERE skill_id = #{skillId}
+    </delete>
+
+    <!-- Optional: Implement insert and deleteByUserId if needed later -->
+    <!--
+    <insert id="insert">
+        INSERT INTO favorites (user_id, skill_id, created_at)
+        VALUES (#{userId}, #{skillId}, NOW())
+    </insert>
+
+    <delete id="deleteByUserId">
+        DELETE FROM favorites WHERE user_id = #{userId}
+    </delete>
+    -->
+
+</mapper> 

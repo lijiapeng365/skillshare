@@ -4,6 +4,8 @@ import com.cloudladdertech.skillshare.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 用户Mapper接口
  */
@@ -29,4 +31,11 @@ public interface UserMapper {
      * 更新用户
      */
     int update(User user);
+
+    /**
+     * 根据用户 ID 列表批量查询用户
+     * @param ids 用户 ID 列表
+     * @return 用户实体列表
+     */
+    List<User> findByIds(@Param("ids") List<Integer> ids);
 } 

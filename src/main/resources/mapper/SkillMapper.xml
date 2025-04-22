@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloudladdertech.skillshare.mapper.SkillMapper">
+
+    <resultMap id="SkillResultMap" type="com.cloudladdertech.skillshare.entity.Skill">
+        <id property="skillId" column="skill_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="teachingMethod" column="teaching_method"/>
+        <result property="exchangeExpectation" column="exchange_expectation"/>
+        <result property="rating" column="rating"/>
+        <result property="exchangeCount" column="exchange_count"/>
+        <result property="viewCount" column="view_count"/>
+        <result property="isActive" column="is_active"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <sql id="selectSkillColumns">
+        skill_id, user_id, category_id, title, description, teaching_method, exchange_expectation,
+        rating, exchange_count, view_count, is_active, created_at, updated_at
+    </sql>
+
+    <select id="findPaged" resultMap="SkillResultMap">
+        SELECT <include refid="selectSkillColumns"/>
+        FROM skills
+        <where>
+            <if test="categoryId != null">
+                AND category_id = #{categoryId}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (title LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            AND is_active = true
+        </where>
+        <if test="sortBy != null and sortBy != ''">
+            ORDER BY
+            <choose>
+                <when test="sortBy == 'rating'">rating</when>
+                <when test="sortBy == 'exchangeCount'">exchange_count</when>
+                <when test="sortBy == 'viewCount'">view_count</when>
+                <otherwise>created_at</otherwise> <!-- Default sort -->
+            </choose>
+            <choose>
+                <when test="sortOrder != null and sortOrder.equalsIgnoreCase('asc')">ASC</when>
+                <otherwise>DESC</otherwise> <!-- Default order -->
+            </choose>
+        </if>
+        <if test="sortBy == null or sortBy == ''">
+            ORDER BY created_at DESC
+        </if>
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countTotal" resultType="long">
+        SELECT COUNT(*)
+        FROM skills
+        <where>
+            <if test="categoryId != null">
+                AND category_id = #{categoryId}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (title LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            AND is_active = true
+        </where>
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="skillId">
+        INSERT INTO skills (user_id, category_id, title, description, teaching_method, exchange_expectation, rating, exchange_count, view_count, is_active, created_at, updated_at)
+        VALUES (#{userId}, #{categoryId}, #{title}, #{description}, #{teachingMethod}, #{exchangeExpectation}, #{rating}, #{exchangeCount}, #{viewCount}, #{isActive}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <select id="findById" resultMap="SkillResultMap">
+        SELECT <include refid="selectSkillColumns"/>
+        FROM skills
+        WHERE skill_id = #{id}
+    </select>
+
+    <update id="update">
+        UPDATE skills
+        <set>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
+            <if test="teachingMethod != null">teaching_method = #{teachingMethod},</if>
+            <if test="exchangeExpectation != null">exchange_expectation = #{exchangeExpectation},</if>
+            <if test="rating != null">rating = #{rating},</if>
+            <if test="exchangeCount != null">exchange_count = #{exchangeCount},</if>
+            <if test="viewCount != null">view_count = #{viewCount},</if>
+            <if test="isActive != null">is_active = #{isActive},</if>
+            <if test="updatedAt != null">updated_at = #{updatedAt},</if>
+            <!-- createdAt should generally not be updated -->
+        </set>
+        WHERE skill_id = #{skillId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM skills WHERE skill_id = #{id}
+    </delete>
+
+    <select id="findHot" resultMap="SkillResultMap">
+        SELECT <include refid="selectSkillColumns"/>
+        FROM skills
+        WHERE is_active = true
+        ORDER BY view_count DESC, exchange_count DESC -- Example: prioritize views, then exchanges
+        LIMIT #{limit}
+    </select>
+
+</mapper> 
